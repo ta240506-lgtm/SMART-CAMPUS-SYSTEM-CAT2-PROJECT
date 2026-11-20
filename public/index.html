@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Campus Monitor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">SC</div>
+        <div><strong>Smart Campus</strong><span>RESOURCE MONITOR</span></div>
+      </div>
+      <div class="side-label">MONITORING</div>
+      <a class="nav-link active" href="#overview"><span>▦</span> Overview</a>
+      <a class="nav-link" href="#facilities"><span>⌂</span> Facilities</a>
+      <a class="nav-link" href="#analytics"><span>⌁</span> Sensor analytics</a>
+      <div class="sidebar-bottom">
+        <div class="connection-card">
+          <div class="connection-heading"><span class="pulse-dot" id="connectionDot"></span> API connection</div>
+          <strong id="connectionText">Checking…</strong>
+          <small id="lastUpdated">Waiting for telemetry</small>
+        </div>
+        <small class="sidebar-foot">ESP32 · HTTP POST · SQLite</small>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">CAMPUS OPERATIONS / LIVE MONITOR</div>
+          <h1>Resource overview</h1>
+          <p class="subheading">Environmental readings and facility status from your ESP32 sensor node.</p>
+        </div>
+        <div class="top-actions">
+          <span class="live-pill"><i></i> LIVE UPDATES</span>
+          <button class="refresh-button" id="refreshButton" title="Refresh now">↻ <span>Refresh</span></button>
+        </div>
+      </header>
+
+      <section class="notice">
+        <span class="notice-icon">i</span>
+        <div><strong>Prototype monitoring note</strong><p>The current ESP32 is one sensor node. Its button changes the facility label being reported; it does not measure all three facilities simultaneously. Deploy a separate sensor node in each facility for independent live readings.</p></div>
+      </section>
+
+      <section id="overview" class="metric-grid">
+        <article class="metric-card">
+          <div class="metric-top"><span>Total readings stored</span><span class="metric-icon blue">▤</span></div>
+          <strong class="metric-value" id="totalRecords">0</strong>
+          <small>Records received by this server</small>
+        </article>
+        <article class="metric-card">
+          <div class="metric-top"><span>Facilities reporting</span><span class="metric-icon violet">⌂</span></div>
+          <strong class="metric-value" id="reportingCount">0 / 3</strong>
+          <small>Distinct facility labels received</small>
+        </article>
+        <article class="metric-card">
+          <div class="metric-top"><span>Latest temperature</span><span class="metric-icon orange">♨</span></div>
+          <strong class="metric-value" id="latestTemperature">—<em>°C</em></strong>
+          <small id="temperatureFacility">Waiting for sensor data</small>
+        </article>
+        <article class="metric-card">
+          <div class="metric-top"><span>Latest humidity</span><span class="metric-icon teal">◌</span></div>
+          <strong class="metric-value" id="latestHumidity">—<em>%</em></strong>
+          <small id="humidityFacility">Waiting for sensor data</small>
+        </article>
+      </section>
+
+      <section id="facilities" class="section-block">
+        <div class="section-heading"><div><div class="eyebrow">FACILITY STATUS</div><h2>Latest facility readings</h2></div><span class="muted" id="dataFreshness">No data received yet</span></div>
+        <div class="facility-grid" id="facilityGrid">
+          <div class="empty-state">Waiting for the first ESP32 telemetry message…</div>
+        </div>
+      </section>
+
+      <section id="analytics" class="analytics-grid">
+        <article class="panel chart-panel">
+          <div class="panel-heading"><div><div class="eyebrow">ENVIRONMENT</div><h2>Temperature & humidity</h2></div>
+            <select id="facilitySelect" aria-label="Select facility"><option value="">All facilities</option></select>
+          </div>
+          <div class="chart-wrap"><canvas id="environmentChart"></canvas></div>
+        </article>
+        <article class="panel chart-panel distance-panel">
+          <div class="panel-heading"><div><div class="eyebrow">PROXIMITY</div><h2>Distance trend</h2></div><span class="unit-label">cm</span></div>
+          <div class="chart-wrap"><canvas id="distanceChart"></canvas></div>
+        </article>
+      </section>
+
+      <section class="panel table-panel">
+        <div class="panel-heading"><div><div class="eyebrow">INGESTION LOG</div><h2>Recent telemetry</h2></div><span class="muted">Latest 12 records</span></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Received</th><th>Facility</th><th>Distance</th><th>Temperature</th><th>Humidity</th><th>Status</th><th>Sensor health</th></tr></thead>
+            <tbody id="telemetryRows"><tr><td colspan="7" class="empty-cell">No telemetry received yet.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+      <footer>SMART CAMPUS RESOURCE & ACCESSIBILITY MONITOR <span>Prototype dashboard · Refreshes every 5 seconds</span></footer>
+    </main>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>
